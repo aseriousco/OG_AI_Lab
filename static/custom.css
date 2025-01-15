@@ -1,0 +1,83 @@
+body {
+    font-family: sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+}
+
+.gradio-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.gr-tabs {
+    border-bottom: 1px solid #ddd;
+}
+
+.gr-tab-button {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.gr-tab-button:hover {
+    background-color: #f0f0f0;
+}
+
+.gr-tab-button.selected {
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.gr-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.gr-column {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.gr-textbox, .gr-dropdown, .gr-slider {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.gr-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.gr-button:hover {
+    background-color: #0056b3;
+}
+
+.gr-button.primary {
+    background-color: #28a745;
+}
+
+.gr-button.primary:hover {
+    background-color: #1e7e34;
+}
+
+.gr-markdown {
+    margin-bottom: 15px;
+}
+
+.gr-image {
+    margin-bottom: 15px;
+}

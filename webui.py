@@ -52,7 +52,7 @@ from subprocess import Popen
 import signal
 from config import python_exec,infer_device,is_half,exp_root,webui_port_main,webui_port_infer_tts,webui_port_uvr5,webui_port_subfix,is_share
 from tools.i18n.i18n import I18nAuto, scan_language_list
-language=sys.argv[-1] if sys.argv[-1] in scan_language_list() else "Auto"
+language="zh_CN"
 os.environ["language"]=language
 i18n = I18nAuto(language=language)
 from scipy.io import wavfile
@@ -72,7 +72,7 @@ mem = []
 if_gpu_ok = False
 
 # 判断是否有能用来训练和加速推理的N卡
-ok_gpu_keywords={"10","16","20","30","40","A2","A3","A4","P4","A50","500","A60","70","80","90","M4","T4","TITAN","L4","4060","H","600"}
+ok_gpu_keywords={"10","16","20","30","40","A2","A3","A4","P4","A50","500","A60","70","80","90","M4","T4","TITAN","L4","4060","H"}
 set_gpu_numbers=set()
 if torch.cuda.is_available() or ngpu != 0:
     for i in range(ngpu):
@@ -122,7 +122,8 @@ for i in pretrained_model_list:
     if os.path.exists(i):...
     else:_+=f'\n    {i}'
 if _:
-    print("warning:",i18n('以下模型不存在:')+_)
+    print("warning:",i18n("以下模型不存在:")+_)
+# print("warning:",i18n("以下模型不存在:")+_)
 
 _ =[[],[]]
 for i in range(2):
@@ -269,7 +270,7 @@ def open_asr(asr_inp_dir, asr_opt_dir, asr_model, asr_model_size, asr_lang, asr_
         p_asr=None
         yield f"ASR任务完成, 查看终端进行下一步", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}, {"__type__":"update","value":output_file_path}, {"__type__":"update","value":output_file_path}, {"__type__":"update","value":asr_inp_dir}
     else:
-        yield "已有正在进行的ASR任务，需先终止才能开启下一次任务", {"__type__":"update","visible":False}, {"__type__":"update","visible":True}, {"__type__":"update"}, {"__type__":"update"}, {"__type__":"update"}
+        yield "已有正在进行的ASR任务，需先终止才能开启下一次任务", {"__type__":"update","visible":False}, {"__type__":"update","visible":True}, {"__type__": "update"}, {"__type__": "update"}, {"__type__": "update"}
         # return None
 
 def close_asr():
@@ -286,14 +287,14 @@ def open_denoise(denoise_inp_dir, denoise_opt_dir):
         check_for_existance([denoise_inp_dir])
         cmd = '"%s" tools/cmd-denoise.py -i "%s" -o "%s" -p %s'%(python_exec,denoise_inp_dir,denoise_opt_dir,"float16"if is_half==True else "float32")
 
-        yield "语音降噪任务开启：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}, {"__type__":"update"}, {"__type__":"update"}
+        yield "语音降噪任务开启：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}, {"__type__": "update"}, {"__type__": "update"}
         print(cmd)
         p_denoise = Popen(cmd, shell=True)
         p_denoise.wait()
         p_denoise=None
-        yield f"语音降噪任务完成, 查看终端进行下一步", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}, {"__type__":"update","value":denoise_opt_dir}, {"__type__":"update","value":denoise_opt_dir}
+        yield f"语音降噪任务完成, 查看终端进行下一步", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}, {"__type__": "update", "value":denoise_opt_dir}, {"__type__": "update", "value":denoise_opt_dir}
     else:
-        yield "已有正在进行的语音降噪任务，需先终止才能开启下一次任务", {"__type__":"update","visible":False}, {"__type__":"update","visible":True}, {"__type__":"update"}, {"__type__":"update"}
+        yield "已有正在进行的语音降噪任务，需先终止才能开启下一次任务", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}, {"__type__": "update"}, {"__type__": "update"}
         # return None
 
 def close_denoise():
@@ -301,7 +302,7 @@ def close_denoise():
     if(p_denoise!=None):
         kill_process(p_denoise.pid)
         p_denoise=None
-    return "已终止语音降噪进程", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
+    return "已终止语音降噪进程", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
 
 p_train_SoVITS=None
 def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D):
@@ -342,14 +343,14 @@ def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_s
         p_train_SoVITS=None
         yield "SoVITS训练完成", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
     else:
-        yield "已有正在进行的SoVITS训练任务，需先终止才能开启下一次任务", {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
+        yield "已有正在进行的SoVITS训练任务，需先终止才能开启下一次任务", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
 
 def close1Ba():
     global p_train_SoVITS
     if(p_train_SoVITS!=None):
         kill_process(p_train_SoVITS.pid)
         p_train_SoVITS=None
-    return "已终止SoVITS训练", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
+    return "已终止SoVITS训练", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
 
 p_train_GPT=None
 def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1):
@@ -392,14 +393,14 @@ def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_
         p_train_GPT=None
         yield "GPT训练完成", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
     else:
-        yield "已有正在进行的GPT训练任务，需先终止才能开启下一次任务", {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
+        yield "已有正在进行的GPT训练任务，需先终止才能开启下一次任务", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
 
 def close1Bb():
     global p_train_GPT
     if(p_train_GPT!=None):
         kill_process(p_train_GPT.pid)
         p_train_GPT=None
-    return "已终止GPT训练", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
+    return "已终止GPT训练", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
 
 ps_slice=[]
 def open_slice(inp,opt_root,threshold,min_length,min_interval,hop_size,max_sil_kept,_max,alpha,n_parts):
@@ -476,7 +477,7 @@ def open1a(inp_text,inp_wav_dir,exp_name,gpu_numbers,bert_pretrained_dir):
         for p in ps1a:
             p.wait()
         opt = []
-        for i_part in range(all_parts):
+        for i_part in range(all_parts):#txt_path="%s/2-name2text-%s.txt"%(opt_dir,i_part)
             txt_path = "%s/2-name2text-%s.txt" % (opt_dir, i_part)
             with open(txt_path, "r", encoding="utf8") as f:
                 opt += f.read().strip("\n").split("\n")
@@ -631,7 +632,6 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                     "exp_name":exp_name,
                     "opt_dir":opt_dir,
                     "bert_pretrained_dir":bert_pretrained_dir,
-                    "is_half": str(is_half)
                 }
                 gpu_names=gpu_numbers1a.split("-")
                 all_parts=len(gpu_names)
@@ -641,6 +641,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                             "i_part": str(i_part),
                             "all_parts": str(all_parts),
                             "_CUDA_VISIBLE_DEVICES": fix_gpu_number(gpu_names[i_part]),
+                            "is_half": str(is_half)
                         }
                     )
                     os.environ.update(config)
@@ -763,17 +764,323 @@ else:
 
 def sync(text):
     return {'__type__':'update','value':text}
-with gr.Blocks(title="GPT-SoVITS WebUI") as app:
-    gr.Markdown(
-        value=
-            i18n("本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>.")
-    )
-    gr.Markdown(
-        value=
-            i18n("中文教程文档：https://www.yuque.com/baicaigongchang1145haoyuangong/ib3g1e")
-    )
+    
+logo_path = "static/A_Serious_Logo.png"
 
-    with gr.Tabs():
+with gr.Blocks(
+    title="OG AI Lab",
+    css="""
+        /* Full viewport background fix */
+        :root, html, body {
+            background: #032320 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        /* Hide fullscreen button for logo */
+        .logo-image > div > div > button {
+            display: none !important;
+        }
+
+        /* Header with larger logo */
+        .header-container {
+            background: rgba(9, 122, 111, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px;
+            backdrop-filter: blur(10px);
+            width: calc(100% - 48px) !important;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            justify-content: flex-start;
+            width: 100%;
+        }
+
+        .logo-container img {
+            width: 220px !important;
+            height: auto !important;
+            object-fit: contain !important;
+        }
+
+        /* Hide download and fullscreen buttons for logo */
+        .logo-container img + div {
+            display: none !important;
+        }
+
+        /* Main content area fix */
+        .contain {
+            max-width: 100% !important;
+            padding: 0 !important;
+        }
+
+        /* Improved Navigation Tabs */
+        .tabs > .tab-nav {
+            background: rgba(9, 122, 111, 0.9);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .tabs > .tab-nav > button {
+            font-size: 16px !important;
+            padding: 12px 25px !important;
+            margin: 0 10px !important;
+            border-radius: 8px !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .tabs > .tab-nav > button:hover {
+            background: rgba(9, 122, 111, 0.8) !important;
+            border-color: white !important;
+            transform: translateY(-2px);
+        }
+
+        .tabs > .tab-nav > button.selected {
+            background: #097A6F !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 4px 12px rgba(9, 122, 111, 0.3) !important;
+        }
+
+        /* Enhanced Footer */
+        .bottom-banner {
+            background: linear-gradient(to right, rgba(3, 35, 32, 0.95), rgba(9, 122, 111, 0.95)) !important;
+            padding: 25px 0;
+            margin: 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            width: 100% !important;
+            position: relative;
+        }
+
+        .bottom-banner::before,
+        .bottom-banner::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 1px;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.3) 20%,
+                rgba(255, 255, 255, 0.3) 80%,
+                rgba(255, 255, 255, 0)
+            );
+        }
+
+        .bottom-banner::before {
+            top: 0;
+        }
+
+        .bottom-banner::after {
+            bottom: 0;
+        }
+
+        .bottom-banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .bottom-banner-title {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #097A6F, #0B8C80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .bottom-banner-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 15px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Hide Default Gradio Footer */
+        .gradio-container > footer,
+        .footer:has(.gradio-logo),
+        footer.footer,
+        .gradio-logo,
+        footer > .container,
+        div:has(> .gradio-logo) {
+            display: none !important;
+        }
+        /* Hide all elements after our custom footer */
+        .bottom-banner ~ * {
+            display: none !important;
+        }
+        footer {visibility: hidden}
+        
+        /* Interactive Elements Styling */
+        button, select, input[type="submit"], input[type="button"] {
+            background: #097A6F !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        button:hover, select:hover, input[type="submit"]:hover, input[type="button"]:hover {
+            background: #0B8C80 !important;
+            border-color: white !important;
+            transform: translateY(-1px);
+        }
+
+        /* Slider styling */
+        input[type="range"] {
+            accent-color: #097A6F !important;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            background: #097A6F !important;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            background: #097A6F !important;
+        }
+
+        /* Progress bars */
+        progress {
+            background: #097A6F !important;
+        }
+
+        /* Checkbox and Radio buttons */
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: #097A6F !important;
+        }
+
+        /* Selected text */
+        ::selection {
+            background: #097A6F !important;
+            color: white !important;
+        }
+
+        /* Focus indicators */
+        *:focus {
+            outline-color: #097A6F !important;
+        }
+
+        /* Dropdown menus */
+        select option:checked,
+        select option:hover {
+            background: #097A6F !important;
+            color: white !important;
+        }
+
+        /* Tab indicators and navigation */
+        .tabs > .tab-nav > button.selected,
+        .tabs > .tab-nav > button:hover {
+            background: #097A6F !important;
+        }
+
+        /* Links */
+        a {
+            color: #0B8C80 !important;
+        }
+
+        a:hover {
+            color: #097A6F !important;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar-thumb {
+            background: #097A6F !important;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0B8C80 !important;
+        }
+
+        /* Loading indicators */
+        .loading-spinner {
+            border-top-color: #097A6F !important;
+        }
+
+        /* Toggle switches */
+        .toggle-switch:checked {
+            background: #097A6F !important;
+        }
+
+        /* Input focus states */
+        input:focus, select:focus, textarea:focus {
+            border-color: #097A6F !important;
+            box-shadow: 0 0 0 2px rgba(9, 122, 111, 0.2) !important;
+        }
+
+        /* Gradio specific elements */
+        .gr-button-primary {
+            background: #097A6F !important;
+            border: none !important;
+        }
+
+        .gr-button-secondary {
+            color: #097A6F !important;
+            border-color: #097A6F !important;
+        }
+
+        .gr-button-secondary:hover {
+            background: rgba(9, 122, 111, 0.1) !important;
+        }
+
+        .gr-form-field:focus-within {
+            border-color: #097A6F !important;
+        }
+
+        .gr-panel {
+            border-color: rgba(9, 122, 111, 0.2) !important;
+        }
+
+        .gr-box {
+            border-color: rgba(9, 122, 111, 0.2) !important;
+        }
+
+        /* Active states */
+        .active, .selected, .current {
+            background: #097A6F !important;
+            color: white !important;
+        }
+    """
+) as app:
+    with gr.Row(equal_height=True):
+        with gr.Column():
+            with gr.Group(elem_classes="header-container"):
+                with gr.Row(elem_classes="logo-container"):
+                    gr.Image(
+                        logo_path,
+                        label=None,
+                        show_label=False,
+                        width=150,
+                        container=False,
+                        show_download_button=False,
+                        interactive=False,
+                        height=150,
+                        elem_classes="logo-image"
+                    )
+                    gr.Markdown(
+                        """
+                        # OG AI Lab
+                        ### 高级语音合成与转换平台
+                        """
+                    )
+
+    with gr.Tabs(elem_classes="tabs"):
         with gr.TabItem(i18n("0-前置数据集获取工具")):#提前随机切片防止uvr5爆内存->uvr5->slicer->asr->打标
             gr.Markdown(value=i18n("0a-UVR5人声伴奏分离&去混响去延迟工具"))
             with gr.Row():
@@ -897,7 +1204,7 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
             open_uvr5.click(change_uvr5, [], [uvr5_info,open_uvr5,close_uvr5])
             close_uvr5.click(change_uvr5, [], [uvr5_info,open_uvr5,close_uvr5])
 
-        with gr.TabItem(i18n("1-GPT-SoVITS-TTS")):
+        with gr.TabItem(i18n("1-TTS")):
             with gr.Row():
                 with gr.Row():
                     exp_name = gr.Textbox(label=i18n("*实验/模型名"), value="xxx", interactive=True)
@@ -1044,11 +1351,27 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
                     open_tts.click(change_tts_inference, [bert_pretrained_dir,cnhubert_base_dir,gpu_number_1C,GPT_dropdown,SoVITS_dropdown, batched_infer_enabled], [tts_info,open_tts,close_tts])
                     close_tts.click(change_tts_inference, [bert_pretrained_dir,cnhubert_base_dir,gpu_number_1C,GPT_dropdown,SoVITS_dropdown, batched_infer_enabled], [tts_info,open_tts,close_tts])
             version_checkbox.change(switch_version,[version_checkbox],[pretrained_s2G,pretrained_s2D,pretrained_s1,GPT_dropdown,SoVITS_dropdown])
-        with gr.TabItem(i18n("2-GPT-SoVITS-变声")):gr.Markdown(value=i18n("施工中，请静候佳音"))
-    app.queue().launch(#concurrency_count=511, max_size=1022
+        with gr.TabItem(i18n("2-变声")):gr.Markdown(value=i18n("施工中，请静候佳音"))
+    # Custom Bottom Banner
+    gr.Markdown(
+        """
+        <div class="bottom-banner">
+            <div class="bottom-banner-content">
+                <div class="bottom-banner-title">Powered by A Serious Company</div>
+                <div class="bottom-banner-subtitle">Advancing the Future of Voice Technology</div>
+            </div>
+        </div>
+        """,
+        elem_classes="bottom-banner"
+    )
+
+    app.queue().launch(
         server_name="0.0.0.0",
         inbrowser=True,
         share=is_share,
         server_port=webui_port_main,
+        show_api=False,
+        show_error=False,
         quiet=True,
+        favicon_path=logo_path  
     )

@@ -212,12 +212,367 @@ def change_sovits_weights(sovits_path,prompt_language=None,text_language=None):
             text_language_update = {'__type__':'update', 'value':i18n("中文")}
         return  {'__type__':'update', 'choices':list(dict_language.keys())}, {'__type__':'update', 'choices':list(dict_language.keys())}, prompt_text_update, prompt_language_update, text_update, text_language_update
 
+import os
+import base64
 
+# Get the absolute path to the logo
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+logo_path = os.path.join(parent_dir, "static", "A_Serious_Logo.png")
 
-with gr.Blocks(title="GPT-SoVITS WebUI") as app:
-    gr.Markdown(
-        value=i18n("本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>.")
-    )
+# Read and encode the logo file
+with open(logo_path, "rb") as image_file:
+    encoded_string = base64.b64encode(image_file.read()).decode()
+
+head_html = """
+<head>
+    <link rel="shortcut icon" type="image/png" href="data:image/png;base64,%s">
+    <link rel="icon" type="image/png" href="data:image/png;base64,%s">
+</head>
+""" % (encoded_string, encoded_string)
+
+with gr.Blocks(
+    title="OG AI Lab",
+    css="""
+        /* Full viewport background fix */
+        :root, html, body {
+            background: #032320 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        #root {
+            background: #032320 !important;
+            width: 100%;
+        }
+
+        .gradio-container {
+            background: #032320 !important;
+            color: white;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+
+        /* Hide fullscreen button for logo */
+        .logo-image > div > div > button {
+            display: none !important;
+        }
+
+        /* Header with larger logo */
+        .header-container {
+            border: none !important;
+            border-radius: 16px;
+            margin: 24px;
+            width: calc(100% - 48px) !important;
+            overflow: hidden;
+            display: flex;
+            background: none !important;
+            padding: 0 !important;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            justify-content: space-between;
+            width: 100%;
+            background: none !important;
+            padding: 0 !important;
+        }
+
+        /* Left side with logo */
+        .logo-container > div:first-child {
+            background: #097A6F !important;
+            padding: 24px;
+            width: 50%;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Right side with title */
+        .logo-container > div:last-child {
+            background: rgba(48, 48, 48, 1) !important;
+            padding: 24px;
+            width: 50%;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            width: 220px !important;
+            height: auto !important;
+            object-fit: contain !important;
+        }
+
+        /* Hide download and fullscreen buttons for logo */
+        .logo-container img + div {
+            display: none !important;
+        }
+
+        /* Main content area fix */
+        .contain {
+            max-width: 100% !important;
+            padding: 0 !important;
+        }
+
+        /* Group Container Styling */
+        .group {
+            background: rgba(48, 48, 48, 1) !important;
+            border: none !important;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px;
+            width: calc(100% - 48px) !important;
+        }
+
+        /* Improved Navigation Tabs */
+        .tabs > .tab-nav {
+            background: rgba(48, 48, 48, 0.9) !important;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: none !important;
+            min-height: 60px !important;
+        }
+
+        .tabs > .tab-nav > button {
+            font-size: 16px !important;
+            padding: 12px 25px !important;
+            margin: 0 10px !important;
+            border-radius: 8px !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border: none !important;
+            transition: all 0.3s ease !important;
+            min-height: 45px !important;
+        }
+
+        .tabs > .tab-nav > button:hover {
+            background: rgba(48, 48, 48, 0.8) !important;
+            transform: translateY(-2px);
+        }
+
+        .tabs > .tab-nav > button.selected {
+            background: rgba(48, 48, 48, 1) !important;
+        }
+
+        /* Input Elements */
+        .gradio-textbox input,
+        .gradio-dropdown > select,
+        .gradio-slider > div > input {
+            background: rgba(3, 35, 32, 0.9) !important;
+            border: 1px solid rgba(9, 122, 111, 0.2) !important;
+            border-radius: 8px !important;
+            color: white !important;
+            padding: 10px 15px !important;
+        }
+
+        .gradio-textbox textarea {
+            background: rgba(3, 35, 32, 0.9) !important;
+            border: 1px solid rgba(9, 122, 111, 0.2) !important;
+            border-radius: 8px !important;
+            color: white !important;
+            padding: 12px !important;
+        }
+
+        /* Buttons */
+        button.primary {
+            background: #097A6F !important;
+            border: none !important;
+            color: white !important;
+            padding: 12px 25px !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        button.primary:hover {
+            transform: translateY(-2px);
+            background: #0B8C80 !important;
+            box-shadow: 0 4px 12px rgba(9, 122, 111, 0.3) !important;
+        }
+
+        button.secondary {
+            background: rgba(9, 122, 111, 0.1) !important;
+            border: 1px solid rgba(9, 122, 111, 0.2) !important;
+            color: white !important;
+        }
+
+        button.secondary:hover {
+            background: rgba(9, 122, 111, 0.2) !important;
+            border-color: #097A6F !important;
+        }
+
+        /* Labels */
+        label {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500 !important;
+            margin-bottom: 6px !important;
+        }
+
+        /* Markdown Text */
+        .markdown-text {
+            color: white !important;
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+        }
+
+        /* Enhanced Footer */
+        .bottom-banner {
+            background: linear-gradient(to right, rgba(3, 35, 32, 0.95), rgba(9, 122, 111, 0.95)) !important;
+            padding: 25px 0;
+            margin: 0;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            width: 100% !important;
+            position: relative;
+        }
+
+        .bottom-banner::before,
+        .bottom-banner::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 1px;
+            background: linear-gradient(
+                to right,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0.3) 20%,
+                rgba(255, 255, 255, 0.3) 80%,
+                rgba(255, 255, 255, 0)
+            );
+        }
+
+        .bottom-banner::before {
+            top: 0;
+        }
+
+        .bottom-banner::after {
+            bottom: 0;
+        }
+
+        .bottom-banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .bottom-banner-title {
+            font-size: 20px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #097A6F, #0B8C80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .bottom-banner-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 15px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        /* Additional Interactive Elements */
+        input[type="range"] {
+            accent-color: #097A6F !important;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            background: #097A6F !important;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            background: #097A6F !important;
+        }
+
+        /* Checkbox and Radio buttons */
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: #097A6F !important;
+        }
+
+        /* Selected text */
+        ::selection {
+            background: #097A6F !important;
+            color: white !important;
+        }
+
+        /* Focus indicators */
+        *:focus {
+            outline-color: #097A6F !important;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar-thumb {
+            background: #097A6F !important;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0B8C80 !important;
+        }
+
+        /* Loading indicators */
+        .loading-spinner {
+            border-top-color: #097A6F !important;
+        }
+
+        /* Gradio specific elements */
+        .gr-button-primary {
+            background: #097A6F !important;
+            border: none !important;
+        }
+
+        .gr-button-secondary {
+            color: #097A6F !important;
+            border-color: #097A6F !important;
+        }
+
+        .gr-button-secondary:hover {
+            background: rgba(9, 122, 111, 0.1) !important;
+        }
+
+        .gr-form-field:focus-within {
+            border-color: #097A6F !important;
+        }
+
+        footer {visibility: hidden}
+    """
+) as app:
+    gr.HTML(head_html)
+    with gr.Column():
+        with gr.Group(elem_classes="header-container"):
+            with gr.Row(elem_classes="logo-container"):
+                with gr.Column():
+                    gr.Image(
+                        logo_path,
+                        label=None,
+                        show_label=False,
+                        width=220,
+                        container=False,
+                        show_download_button=False,
+                        interactive=False,
+                        elem_classes="logo-image"
+                    )
+                with gr.Column():
+                    gr.Markdown(
+                        """
+                        # OG AI Lab
+                        ### 高级语音合成与转换平台
+                        """
+                    )
     
     with gr.Column():
         # with gr.Group():
@@ -326,11 +681,35 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
             cut_text.click(to_cut, [text_inp, _how_to_cut], [text_opt])
         gr.Markdown(value=i18n("后续将支持转音素、手工修改音素、语音合成分步执行。"))
 
+    gr.Markdown(
+        """
+        <div class="bottom-banner">
+            <div class="bottom-banner-content">
+                <div class="bottom-banner-title">Powered by A Serious Company</div>
+                <div class="bottom-banner-subtitle">Advancing the Future of Voice Technology</div>
+            </div>
+        </div>
+        """,
+        elem_classes="bottom-banner"
+    )
+
+app.queue().launch(
+    server_name="0.0.0.0",
+    server_port=infer_ttswebui,
+    share=is_share,
+    inbrowser=True,
+    quiet=True,
+    favicon_path=logo_path
+)
+
 if __name__ == '__main__':
     app.queue().launch(#concurrency_count=511, max_size=1022
         server_name="0.0.0.0",
         inbrowser=True,
         share=is_share,
         server_port=infer_ttswebui,
+        show_api=False,
+        show_error=False,
         quiet=True,
+        favicon_path=logo_path  
     )

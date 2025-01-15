@@ -63,12 +63,6 @@ class GPTSoVITSGUI(QMainWindow):
             }
         """)    
 
-        license_text = (
-        "本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. "
-        "如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录LICENSE.")
-        license_label = QLabel(license_text)
-        license_label.setWordWrap(True)
-
         self.GPT_model_label = QLabel("选择GPT模型:")
         self.GPT_model_input = QLineEdit()
         self.GPT_model_input.setPlaceholderText("拖拽或选择文件")

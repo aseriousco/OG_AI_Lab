@@ -685,11 +685,252 @@ def html_left(text, label='p'):
                 <{label} style="margin: 0; padding: 0;">{text}</{label}>
                 </div>"""
 
+logo_path = "static/A_Serious_Logo.png"
 
-with gr.Blocks(title="GPT-SoVITS WebUI") as app:
-    gr.Markdown(
-        value=i18n("本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>.")
-    )
+with gr.Blocks(
+    title="OG AI Lab",
+    css="""
+        /* Full viewport background fix */
+        :root, html, body {
+            background: #032320 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 100vh;
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        #root {
+            background: #032320 !important;
+            width: 100%;
+        }
+
+        .gradio-container {
+            background: #032320 !important;
+            color: white;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0 !important;
+            padding: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+
+        /* Hide fullscreen button for logo */
+        .logo-image > div > div > button {
+            display: none !important;
+        }
+
+        /* Header with larger logo */
+        .header-container {
+            border: none !important;
+            border-radius: 16px;
+            margin: 24px;
+            width: calc(100% - 48px) !important;
+            overflow: hidden;
+            display: flex;
+            background: none !important;
+            padding: 0 !important;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            justify-content: space-between;
+            width: 100%;
+            background: none !important;
+            padding: 0 !important;
+        }
+
+        /* Left side with logo */
+        .logo-container > div:first-child {
+            background: #097A6F !important;
+            padding: 24px;
+            width: 50%;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Right side with title */
+        .logo-container > div:last-child {
+            background: rgba(48, 48, 48, 1) !important;
+            padding: 24px;
+            width: 50%;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container img {
+            width: 220px !important;
+            height: auto !important;
+            object-fit: contain !important;
+        }
+
+        /* Hide download and fullscreen buttons for logo */
+        .logo-container img + div {
+            display: none !important;
+        }
+
+        /* Main content area fix */
+        .contain {
+            max-width: 100% !important;
+            padding: 0 !important;
+        }
+
+        /* Group Container Styling */
+        .group {
+            background: rgba(48, 48, 48, 1) !important;
+            border: none !important;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px;
+            width: calc(100% - 48px) !important;
+        }
+
+        /* Improved Navigation Tabs */
+        .tabs > .tab-nav {
+            background: rgba(48, 48, 48, 0.9) !important;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: none !important;
+            min-height: 60px !important;
+        }
+
+        .tabs > .tab-nav > button {
+            font-size: 16px !important;
+            padding: 12px 25px !important;
+            margin: 0 10px !important;
+            border-radius: 8px !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border: none !important;
+            transition: all 0.3s ease !important;
+            min-height: 45px !important;
+        }
+
+        .tabs > .tab-nav > button:hover {
+            background: rgba(48, 48, 48, 0.8) !important;
+            transform: translateY(-2px);
+        }
+
+        .tabs > .tab-nav > button.selected {
+            background: rgba(48, 48, 48, 1) !important;
+        }
+
+        /* Input Elements */
+        .gradio-textbox input,
+        .gradio-dropdown > select,
+        .gradio-slider > div > input {
+            background: rgba(3, 35, 32, 0.9) !important;
+            border: 1px solid rgba(9, 122, 111, 0.2) !important;
+            border-radius: 8px !important;
+            color: white !important;
+            padding: 10px 15px !important;
+        }
+
+        .gradio-textbox textarea {
+            background: rgba(3, 35, 32, 0.9) !important;
+            border: 1px solid rgba(9, 122, 111, 0.2) !important;
+            border-radius: 8px !important;
+            color: white !important;
+            padding: 12px !important;
+        }
+
+        /* Buttons */
+        button.primary {
+            background: #097A6F !important;
+            border: none !important;
+            color: white !important;
+            padding: 12px 25px !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        button.primary:hover {
+            transform: translateY(-2px);
+            background: #0B8C80 !important;
+            box-shadow: 0 4px 12px rgba(9, 122, 111, 0.3) !important;
+        }
+
+        /* Checkbox and Radio buttons */
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: #097A6F !important;
+        }
+
+        /* Selected text */
+        ::selection {
+            background: #097A6F !important;
+            color: white !important;
+        }
+
+        /* Focus indicators */
+        *:focus {
+            outline-color: #097A6F !important;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar-thumb {
+            background: #097A6F !important;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0B8C80 !important;
+        }
+
+        /* Loading indicators */
+        .loading-spinner {
+            border-top-color: #097A6F !important;
+        }
+
+        /* Gradio specific elements */
+        .gr-button-primary {
+            background: #097A6F !important;
+            border: none !important;
+        }
+
+        .gr-button-secondary {
+            color: #097A6F !important;
+            border-color: #097A6F !important;
+        }
+
+        .gr-button-secondary:hover {
+            background: rgba(9, 122, 111, 0.1) !important;
+        }
+
+        .gr-form-field:focus-within {
+            border-color: #097A6F !important;
+        }
+
+        footer {visibility: hidden}
+    """
+) as app:
+    with gr.Row(equal_height=True):
+        with gr.Column():
+            with gr.Group(elem_classes="header-container"):
+                with gr.Row(elem_classes="logo-container"):
+                    with gr.Column():
+                        gr.Image(
+                            logo_path,
+                            label=None,
+                            show_label=False,
+                            width=220,
+                            container=False,
+                            show_download_button=False,
+                            interactive=False,
+                            elem_classes="logo-image"
+                        )
+                    with gr.Column():
+                        gr.Markdown(
+                            """
+                            # OG AI Lab
+                            ### 高级语音合成与转换平台
+                            """
+                        )
     with gr.Group():
         gr.Markdown(html_center(i18n("模型切换"),'h3'))
         with gr.Row():
@@ -769,4 +1010,5 @@ if __name__ == '__main__':
         share=is_share,
         server_port=infer_ttswebui,
         quiet=True,
+        favicon_path=logo_path  
     )
