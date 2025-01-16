@@ -239,25 +239,18 @@ with gr.Blocks(
             background: #032320 !important;
             margin: 0 !important;
             padding: 0 !important;
-            min-height: 100vh;
-            width: 100vw;
-            overflow-x: hidden;
+            min-height: 100vh !important;
+            display: flex !important;
+            flex-direction: column !important;
         }
 
-        #root {
-            background: #032320 !important;
-            width: 100%;
-        }
-
+        /* Side margins */
         .gradio-container {
-            background: #032320 !important;
-            color: white;
-            min-height: 100vh;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            margin: 0 !important;
-            padding: 0 !important;
-            max-width: 100% !important;
-            width: 100% !important;
+            max-width: 1800px !important;
+            margin: auto !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+            flex-grow: 1 !important;
         }
 
         /* Hide fullscreen button for logo */
