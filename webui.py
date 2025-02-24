@@ -39,7 +39,7 @@ for site_packages_root in site_packages_roots:
         try:
             with open("%s/users.pth" % (site_packages_root), "w") as f:
                 f.write(
-                    "%s\n%s/tools\n%s/tools/asr\n%s/GPT_SoVITS\n%s/tools/uvr5"
+                    "%s\n%s/tools\n%s/tools/asr\n%s/OG_AI_LAB\n%s/tools/uvr5"
                     % (now_dir, now_dir, now_dir, now_dir, now_dir)
                 )
             break
@@ -112,10 +112,10 @@ def fix_gpu_numbers(inputs):
     except:
         return inputs
 
-pretrained_sovits_name=["GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth", "GPT_SoVITS/pretrained_models/s2G488k.pth"]
-pretrained_gpt_name=["GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt", "GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt"]
+pretrained_sovits_name=["OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth", "OG_AI_LAB/pretrained_models/s2G488k.pth"]
+pretrained_gpt_name=["OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt", "OG_AI_LAB/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt"]
 
-pretrained_model_list = (pretrained_sovits_name[-int(version[-1])+2],pretrained_sovits_name[-int(version[-1])+2].replace("s2G","s2D"),pretrained_gpt_name[-int(version[-1])+2],"GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large","GPT_SoVITS/pretrained_models/chinese-hubert-base")
+pretrained_model_list = (pretrained_sovits_name[-int(version[-1])+2],pretrained_sovits_name[-int(version[-1])+2].replace("s2G","s2D"),pretrained_gpt_name[-int(version[-1])+2],"OG_AI_LAB/pretrained_models/chinese-roberta-wwm-ext-large","OG_AI_LAB/pretrained_models/chinese-hubert-base")
 
 _=''
 for i in pretrained_model_list:
@@ -133,8 +133,8 @@ for i in range(2):
     else:_[-1].append("")
 pretrained_gpt_name,pretrained_sovits_name = _
 
-SoVITS_weight_root=["SoVITS_weights_v2","SoVITS_weights"]
-GPT_weight_root=["GPT_weights_v2","GPT_weights"]
+SoVITS_weight_root=["OG_AI_Lab_Beta_weights_v2","OG_AI_Lab_Beta_weights"]
+GPT_weight_root=["OG_AI_Lab_Alpha_weights_v2","OG_AI_Lab_Alpha_weights"]
 for root in SoVITS_weight_root+GPT_weight_root:
     os.makedirs(root,exist_ok=True)
 def get_weights_names():
@@ -227,9 +227,9 @@ def change_uvr5():
 def change_tts_inference(bert_path,cnhubert_base_path,gpu_number,gpt_path,sovits_path, batched_infer_enabled):
     global p_tts_inference
     if batched_infer_enabled:
-        cmd = '"%s" GPT_SoVITS/inference_webui_fast.py "%s"'%(python_exec, language)
+        cmd = '"%s" OG_AI_LAB/inference_webui_fast.py "%s"'%(python_exec, language)
     else:
-        cmd = '"%s" GPT_SoVITS/inference_webui.py "%s"'%(python_exec, language)
+        cmd = '"%s" OG_AI_LAB/inference_webui.py "%s"'%(python_exec, language)
     if(p_tts_inference==None):
         os.environ["gpt_path"]=gpt_path if "/" in gpt_path else "%s/%s"%(GPT_weight_root,gpt_path)
         os.environ["sovits_path"]=sovits_path if "/"in sovits_path else "%s/%s"%(SoVITS_weight_root,sovits_path)
@@ -308,7 +308,7 @@ p_train_SoVITS=None
 def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D):
     global p_train_SoVITS
     if(p_train_SoVITS==None):
-        with open("GPT_SoVITS/configs/s2.json")as f:
+        with open("OG_AI_LAB/configs/s2.json")as f:
             data=f.read()
             data=json.loads(data)
         s2_dir="%s/%s"%(exp_root,exp_name)
@@ -335,7 +335,7 @@ def open1Ba(batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_s
         tmp_config_path="%s/tmp_s2.json"%tmp
         with open(tmp_config_path,"w")as f:f.write(json.dumps(data))
 
-        cmd = '"%s" GPT_SoVITS/s2_train.py --config "%s"'%(python_exec,tmp_config_path)
+        cmd = '"%s" OG_AI_LAB/s2_train.py --config "%s"'%(python_exec,tmp_config_path)
         yield "SoVITS训练开始：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
         print(cmd)
         p_train_SoVITS = Popen(cmd, shell=True)
@@ -356,7 +356,7 @@ p_train_GPT=None
 def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers,pretrained_s1):
     global p_train_GPT
     if(p_train_GPT==None):
-        with open("GPT_SoVITS/configs/s1longer.yaml"if version=="v1"else "GPT_SoVITS/configs/s1longer-v2.yaml")as f:
+        with open("OG_AI_LAB/configs/s1longer.yaml"if version=="v1"else "OG_AI_LAB/configs/s1longer-v2.yaml")as f:
             data=f.read()
             data=yaml.load(data, Loader=yaml.FullLoader)
         s1_dir="%s/%s"%(exp_root,exp_name)
@@ -384,23 +384,23 @@ def open1Bb(batch_size,total_epoch,exp_name,if_dpo,if_save_latest,if_save_every_
         os.environ["hz"]="25hz"
         tmp_config_path="%s/tmp_s1.yaml"%tmp
         with open(tmp_config_path, "w") as f:f.write(yaml.dump(data, default_flow_style=False))
-        # cmd = '"%s" GPT_SoVITS/s1_train.py --config_file "%s" --train_semantic_path "%s/6-name2semantic.tsv" --train_phoneme_path "%s/2-name2text.txt" --output_dir "%s/logs_s1"'%(python_exec,tmp_config_path,s1_dir,s1_dir,s1_dir)
-        cmd = '"%s" GPT_SoVITS/s1_train.py --config_file "%s" '%(python_exec,tmp_config_path)
-        yield "GPT训练开始：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
+        # cmd = '"%s" OG_AI_LAB/s1_train.py --config_file "%s" --train_semantic_path "%s/6-name2semantic.tsv" --train_phoneme_path "%s/2-name2text.txt" --output_dir "%s/logs_s1"'%(python_exec,tmp_config_path,s1_dir,s1_dir,s1_dir)
+        cmd = '"%s" OG_AI_LAB/s1_train.py --config_file "%s" '%(python_exec,tmp_config_path)
+        yield "Alpha训练开始：%s"%cmd, {"__type__":"update","visible":False}, {"__type__":"update","visible":True}
         print(cmd)
         p_train_GPT = Popen(cmd, shell=True)
         p_train_GPT.wait()
         p_train_GPT=None
-        yield "GPT训练完成", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
+        yield "Alpha训练完成", {"__type__":"update","visible":True}, {"__type__":"update","visible":False}
     else:
-        yield "已有正在进行的GPT训练任务，需先终止才能开启下一次任务", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
+        yield "已有正在进行的Alpha训练任务，需先终止才能开启下一次任务", {"__type__": "update", "visible": False}, {"__type__": "update", "visible": True}
 
 def close1Bb():
     global p_train_GPT
     if(p_train_GPT!=None):
         kill_process(p_train_GPT.pid)
         p_train_GPT=None
-    return "已终止GPT训练", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
+    return "已终止Alpha训练", {"__type__": "update", "visible": True}, {"__type__": "update", "visible": False}
 
 ps_slice=[]
 def open_slice(inp,opt_root,threshold,min_length,min_interval,hop_size,max_sil_kept,_max,alpha,n_parts):
@@ -469,7 +469,7 @@ def open1a(inp_text,inp_wav_dir,exp_name,gpu_numbers,bert_pretrained_dir):
                 }
             )
             os.environ.update(config)
-            cmd = '"%s" GPT_SoVITS/prepare_datasets/1-get-text.py'%python_exec
+            cmd = '"%s" OG_AI_LAB/prepare_datasets/1-get-text.py'%python_exec
             print(cmd)
             p = Popen(cmd, shell=True)
             ps1a.append(p)
@@ -531,7 +531,7 @@ def open1b(inp_text,inp_wav_dir,exp_name,gpu_numbers,ssl_pretrained_dir):
                 }
             )
             os.environ.update(config)
-            cmd = '"%s" GPT_SoVITS/prepare_datasets/2-get-hubert-wav32k.py'%python_exec
+            cmd = '"%s" OG_AI_LAB/prepare_datasets/2-get-hubert-wav32k.py'%python_exec
             print(cmd)
             p = Popen(cmd, shell=True)
             ps1b.append(p)
@@ -567,7 +567,7 @@ def open1c(inp_text,exp_name,gpu_numbers,pretrained_s2G_path):
             "exp_name":exp_name,
             "opt_dir":opt_dir,
             "pretrained_s2G":pretrained_s2G_path,
-            "s2config_path":"GPT_SoVITS/configs/s2.json",
+            "s2config_path":"OG_AI_LAB/configs/s2.json",
             "is_half": str(is_half)
         }
         gpu_names=gpu_numbers.split("-")
@@ -581,7 +581,7 @@ def open1c(inp_text,exp_name,gpu_numbers,pretrained_s2G_path):
                 }
             )
             os.environ.update(config)
-            cmd = '"%s" GPT_SoVITS/prepare_datasets/3-get-semantic.py'%python_exec
+            cmd = '"%s" OG_AI_LAB/prepare_datasets/3-get-semantic.py'%python_exec
             print(cmd)
             p = Popen(cmd, shell=True)
             ps1c.append(p)
@@ -645,7 +645,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                         }
                     )
                     os.environ.update(config)
-                    cmd = '"%s" GPT_SoVITS/prepare_datasets/1-get-text.py'%python_exec
+                    cmd = '"%s" OG_AI_LAB/prepare_datasets/1-get-text.py'%python_exec
                     print(cmd)
                     p = Popen(cmd, shell=True)
                     ps1abc.append(p)
@@ -682,7 +682,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                     }
                 )
                 os.environ.update(config)
-                cmd = '"%s" GPT_SoVITS/prepare_datasets/2-get-hubert-wav32k.py'%python_exec
+                cmd = '"%s" OG_AI_LAB/prepare_datasets/2-get-hubert-wav32k.py'%python_exec
                 print(cmd)
                 p = Popen(cmd, shell=True)
                 ps1abc.append(p)
@@ -698,7 +698,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                     "exp_name":exp_name,
                     "opt_dir":opt_dir,
                     "pretrained_s2G":pretrained_s2G_path,
-                    "s2config_path":"GPT_SoVITS/configs/s2.json",
+                    "s2config_path":"OG_AI_LAB/configs/s2.json",
                 }
                 gpu_names=gpu_numbers1c.split("-")
                 all_parts=len(gpu_names)
@@ -711,7 +711,7 @@ def open1abc(inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numb
                         }
                     )
                     os.environ.update(config)
-                    cmd = '"%s" GPT_SoVITS/prepare_datasets/3-get-semantic.py'%python_exec
+                    cmd = '"%s" OG_AI_LAB/prepare_datasets/3-get-semantic.py'%python_exec
                     print(cmd)
                     p = Popen(cmd, shell=True)
                     ps1abc.append(p)
@@ -756,9 +756,9 @@ def switch_version(version_):
         gr.Warning(i18n(f'未下载{version.upper()}模型'))
     return  {'__type__':'update', 'value':pretrained_sovits_name[-int(version[-1])+2]}, {'__type__':'update', 'value':pretrained_sovits_name[-int(version[-1])+2].replace("s2G","s2D")}, {'__type__':'update', 'value':pretrained_gpt_name[-int(version[-1])+2]}, {'__type__':'update', 'value':pretrained_gpt_name[-int(version[-1])+2]}, {'__type__':'update', 'value':pretrained_sovits_name[-int(version[-1])+2]}
 
-if os.path.exists('GPT_SoVITS/text/G2PWModel'):...
+if os.path.exists('OG_AI_LAB/text/G2PWModel'):...
 else:
-    cmd = '"%s" GPT_SoVITS/download.py'%python_exec
+    cmd = '"%s" OG_AI_LAB/download.py'%python_exec
     p = Popen(cmd, shell=True)
     p.wait()
 
@@ -1125,7 +1125,7 @@ with gr.Blocks(
                     with gr.Row():
                         asr_inp_dir = gr.Textbox(
                             label=i18n("输入文件夹路径"),
-                            value="D:\\GPT-SoVITS\\raw\\xxx",
+                            value="\\raw\\xxx",
                             interactive=True,
                         )
                         asr_opt_dir = gr.Textbox(
@@ -1192,7 +1192,7 @@ with gr.Blocks(
                     with gr.Row():
                         path_list = gr.Textbox(
                         label=i18n(".list标注文件的路径"),
-                        value="D:\\RVC1006\\GPT-SoVITS\\raw\\xxx.list",
+                        value="\\raw\\xxx.list",
                         interactive=True,
                     )
                         label_info = gr.Textbox(label=i18n("打标工具进程输出信息"))
@@ -1211,18 +1211,18 @@ with gr.Blocks(
                     gpu_info = gr.Textbox(label=i18n("显卡信息"), value=gpu_info, visible=True, interactive=False)
                     version_checkbox = gr.Radio(label=i18n("版本"),value=version,choices=['v1','v2'])
                 with gr.Row():
-                    pretrained_s2G = gr.Textbox(label=i18n("预训练的SoVITS-G模型路径"), value=pretrained_sovits_name[-int(version[-1])+2], interactive=True, lines=2, max_lines=3,scale=9)
-                    pretrained_s2D = gr.Textbox(label=i18n("预训练的SoVITS-D模型路径"), value=pretrained_sovits_name[-int(version[-1])+2].replace("s2G","s2D"), interactive=True, lines=2, max_lines=3,scale=9)
-                    pretrained_s1 = gr.Textbox(label=i18n("预训练的GPT模型路径"), value=pretrained_gpt_name[-int(version[-1])+2], interactive=True, lines=2, max_lines=3,scale=10)
+                    pretrained_s2G = gr.Textbox(label=i18n("预训练的Beta-G模型路径"), value=pretrained_sovits_name[-int(version[-1])+2], interactive=True, lines=2, max_lines=3,scale=9)
+                    pretrained_s2D = gr.Textbox(label=i18n("预训练的Beta-D模型路径"), value=pretrained_sovits_name[-int(version[-1])+2].replace("s2G","s2D"), interactive=True, lines=2, max_lines=3,scale=9)
+                    pretrained_s1 = gr.Textbox(label=i18n("预训练的Alpha模型路径"), value=pretrained_gpt_name[-int(version[-1])+2], interactive=True, lines=2, max_lines=3,scale=10)
             with gr.TabItem(i18n("1A-训练集格式化工具")):
                 gr.Markdown(value=i18n("输出logs/实验名目录下应有23456开头的文件和文件夹"))
                 with gr.Row():
                     with gr.Row():
-                        inp_text = gr.Textbox(label=i18n("*文本标注文件"),value=r"D:\RVC1006\GPT-SoVITS\raw\xxx.list",interactive=True,scale=10)
+                        inp_text = gr.Textbox(label=i18n("*文本标注文件"),value=r"\raw\xxx.list",interactive=True,scale=10)
                     with gr.Row():
                         inp_wav_dir = gr.Textbox(
                             label=i18n("*训练集音频文件目录"),
-                            # value=r"D:\RVC1006\GPT-SoVITS\raw\xxx",
+                            # value=r"\raw\xxx",
                             interactive=True,
                             placeholder=i18n("填切割后音频所在目录！读取的音频文件完整路径=该目录-拼接-list文件里波形对应的文件名（不是全路径）。如果留空则使用.list文件里的绝对全路径。"), scale=10
                         )
@@ -1231,7 +1231,7 @@ with gr.Blocks(
                     with gr.Row():
                         gpu_numbers1a = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"),value="%s-%s"%(gpus,gpus),interactive=True)
                     with gr.Row():
-                        bert_pretrained_dir = gr.Textbox(label=i18n("预训练的中文BERT模型路径"),value="GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large",interactive=False,lines=2)
+                        bert_pretrained_dir = gr.Textbox(label=i18n("预训练的中文BERT模型路径"),value="OG_AI_LAB/pretrained_models/chinese-roberta-wwm-ext-large",interactive=False,lines=2)
                     with gr.Row():
                         button1a_open = gr.Button(i18n("开启文本获取"), variant="primary",visible=True)
                         button1a_close = gr.Button(i18n("终止文本获取进程"), variant="primary",visible=False)
@@ -1242,7 +1242,7 @@ with gr.Blocks(
                     with gr.Row():
                         gpu_numbers1Ba = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"),value="%s-%s"%(gpus,gpus),interactive=True)
                     with gr.Row():
-                        cnhubert_base_dir = gr.Textbox(label=i18n("预训练的SSL模型路径"),value="GPT_SoVITS/pretrained_models/chinese-hubert-base",interactive=False,lines=2)
+                        cnhubert_base_dir = gr.Textbox(label=i18n("预训练的SSL模型路径"),value="OG_AI_LAB/pretrained_models/chinese-hubert-base",interactive=False,lines=2)
                     with gr.Row():
                         button1b_open = gr.Button(i18n("开启SSL提取"), variant="primary",visible=True)
                         button1b_close = gr.Button(i18n("终止SSL提取进程"), variant="primary",visible=False)
@@ -1253,7 +1253,7 @@ with gr.Blocks(
                     with gr.Row():
                         gpu_numbers1c = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"),value="%s-%s"%(gpus,gpus),interactive=True)
                     with gr.Row():
-                        pretrained_s2G_ = gr.Textbox(label=i18n("预训练的SoVITS-G模型路径"), value=pretrained_sovits_name[-int(version[-1])+2], interactive=False,lines=2)
+                        pretrained_s2G_ = gr.Textbox(label=i18n("预训练的Beta-G模型路径"), value=pretrained_sovits_name[-int(version[-1])+2], interactive=False,lines=2)
                     with gr.Row():
                         button1c_open = gr.Button(i18n("开启语义token提取"), variant="primary",visible=True)
                         button1c_close = gr.Button(i18n("终止语义token提取进程"), variant="primary",visible=False)
@@ -1284,7 +1284,7 @@ with gr.Blocks(
             button1abc_open.click(open1abc, [inp_text,inp_wav_dir,exp_name,gpu_numbers1a,gpu_numbers1Ba,gpu_numbers1c,bert_pretrained_dir,cnhubert_base_dir,pretrained_s2G], [info1abc,button1abc_open,button1abc_close])
             button1abc_close.click(close1abc, [], [info1abc,button1abc_open,button1abc_close])
             with gr.TabItem(i18n("1B-微调训练")):
-                gr.Markdown(value=i18n("1Ba-SoVITS训练。用于分享的模型文件输出在SoVITS_weights下。"))
+                gr.Markdown(value=i18n("1Ba-Beta训练。用于分享的模型文件输出在Beta_weights下。"))
                 with gr.Row():
                     with gr.Column():
                         with gr.Row():
@@ -1301,11 +1301,11 @@ with gr.Blocks(
                             gpu_numbers1Ba = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"), value="%s" % (gpus), interactive=True)
                 with gr.Row():
                     with gr.Row():
-                        button1Ba_open = gr.Button(i18n("开启SoVITS训练"), variant="primary",visible=True)
-                        button1Ba_close = gr.Button(i18n("终止SoVITS训练"), variant="primary",visible=False)
+                        button1Ba_open = gr.Button(i18n("开启Beta训练"), variant="primary",visible=True)
+                        button1Ba_close = gr.Button(i18n("终止Beta训练"), variant="primary",visible=False)
                     with gr.Row():
-                        info1Ba=gr.Textbox(label=i18n("SoVITS训练进程输出信息"))
-                gr.Markdown(value=i18n("1Bb-GPT训练。用于分享的模型文件输出在GPT_weights下。"))
+                        info1Ba=gr.Textbox(label=i18n("Beta训练进程输出信息"))
+                gr.Markdown(value=i18n("1Bb-Alpha训练。用于分享的模型文件输出在Alpha_weights下。"))
                 with gr.Row():
                     with gr.Column():
                         with gr.Row():
@@ -1322,20 +1322,20 @@ with gr.Blocks(
                             gpu_numbers1Bb = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"), value="%s" % (gpus), interactive=True)
                 with gr.Row():
                     with gr.Row():
-                        button1Bb_open = gr.Button(i18n("开启GPT训练"), variant="primary",visible=True)
-                        button1Bb_close = gr.Button(i18n("终止GPT训练"), variant="primary",visible=False)
+                        button1Bb_open = gr.Button(i18n("开启Alpha训练"), variant="primary",visible=True)
+                        button1Bb_close = gr.Button(i18n("终止Alpha训练"), variant="primary",visible=False)
                     with gr.Row():
-                        info1Bb=gr.Textbox(label=i18n("GPT训练进程输出信息"))
+                        info1Bb=gr.Textbox(label=i18n("Alpha训练进程输出信息"))
             button1Ba_open.click(open1Ba, [batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D], [info1Ba,button1Ba_open,button1Ba_close])
             button1Ba_close.click(close1Ba, [], [info1Ba,button1Ba_open,button1Ba_close])
             button1Bb_open.click(open1Bb, [batch_size1Bb,total_epoch1Bb,exp_name,if_dpo,if_save_latest1Bb,if_save_every_weights1Bb,save_every_epoch1Bb,gpu_numbers1Bb,pretrained_s1],   [info1Bb,button1Bb_open,button1Bb_close])
             button1Bb_close.click(close1Bb, [], [info1Bb,button1Bb_open,button1Bb_close])
             with gr.TabItem(i18n("1C-推理")):
-                gr.Markdown(value=i18n("选择训练完存放在SoVITS_weights和GPT_weights下的模型。默认的一个是底模，体验5秒Zero Shot TTS用。"))
+                gr.Markdown(value=i18n("选择训练完存放在Beta_weights和Alpha_weights下的模型。默认的一个是底模，体验5秒Zero Shot TTS用。"))
                 with gr.Row():
                     with gr.Row():
-                        GPT_dropdown = gr.Dropdown(label=i18n("*GPT模型列表"), choices=sorted(GPT_names,key=custom_sort_key),value=pretrained_gpt_name[0],interactive=True)
-                        SoVITS_dropdown = gr.Dropdown(label=i18n("*SoVITS模型列表"), choices=sorted(SoVITS_names,key=custom_sort_key),value=pretrained_sovits_name[0],interactive=True)
+                        GPT_dropdown = gr.Dropdown(label=i18n("*Alpha模型列表"), choices=sorted(GPT_names,key=custom_sort_key),value=pretrained_gpt_name[0],interactive=True)
+                        SoVITS_dropdown = gr.Dropdown(label=i18n("*Beta模型列表"), choices=sorted(SoVITS_names,key=custom_sort_key),value=pretrained_sovits_name[0],interactive=True)
                     with gr.Row():
                         gpu_number_1C=gr.Textbox(label=i18n("GPU卡号,只能填1个整数"), value=gpus, interactive=True)
                         refresh_button = gr.Button(i18n("刷新模型路径"), variant="primary")

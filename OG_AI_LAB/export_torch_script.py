@@ -514,9 +514,9 @@ class T2SModel(nn.Module):
         return y[:, -idx:].unsqueeze(0)
 
 bert_path = os.environ.get(
-    "bert_path", "GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large"
+    "bert_path", "OG_AI_LAB/pretrained_models/chinese-roberta-wwm-ext-large"
 )
-cnhubert_base_path = "GPT_SoVITS/pretrained_models/chinese-hubert-base"
+cnhubert_base_path = "OG_AI_LAB/pretrained_models/chinese-hubert-base"
 cnhubert.cnhubert_base_path = cnhubert_base_path
 
 @torch.jit.script
@@ -641,8 +641,8 @@ def export(gpt_path, vits_path, ref_audio_path, ref_text, output_path, export_be
     print('#### script t2s_m ####')
     
     print("vits.hps.data.sampling_rate:",vits.hps.data.sampling_rate)
-    gpt_sovits = GPT_SoVITS(t2s,vits).to(device)
-    gpt_sovits.eval()
+    OG_AI_LAB = OG_AI_LAB(t2s,vits).to(device)
+    OG_AI_LAB.eval()
     
     ref_audio_sr = s.resample(ref_audio,16000,32000).to(device)
 
@@ -654,8 +654,8 @@ def export(gpt_path, vits_path, ref_audio_path, ref_text, output_path, export_be
     torch._dynamo.mark_dynamic(text_bert, 0)
 
     with torch.no_grad():
-        gpt_sovits_export = torch.jit.trace(
-        gpt_sovits,
+        OG_AI_LAB_export = torch.jit.trace(
+        OG_AI_LAB,
         example_inputs=(
             ssl_content,
             ref_audio_sr,
@@ -664,9 +664,9 @@ def export(gpt_path, vits_path, ref_audio_path, ref_text, output_path, export_be
             ref_bert,
             text_bert))
     
-        gpt_sovits_path = os.path.join(output_path, "gpt_sovits_model.pt")
-        gpt_sovits_export.save(gpt_sovits_path)
-        print('#### exported gpt_sovits ####')
+        OG_AI_LAB_path = os.path.join(output_path, "OG_AI_LAB_model.pt")
+        OG_AI_LAB_export.save(OG_AI_LAB_path)
+        print('#### exported OG_AI_LAB ####')
 
 @torch.jit.script
 def parse_audio(ref_audio):
@@ -678,7 +678,7 @@ def parse_audio(ref_audio):
 def resamplex(ref_audio:torch.Tensor,src_sr:int,dst_sr:int)->torch.Tensor:
     return torchaudio.functional.resample(ref_audio,src_sr,dst_sr).float()
 
-class GPT_SoVITS(nn.Module):
+class OG_AI_LAB(nn.Module):
     def __init__(self, t2s:T2SModel,vits:VitsModel):
         super().__init__()
         self.t2s = t2s
@@ -727,8 +727,8 @@ def test():
     # ssl.eval()
     ssl = torch.jit.load("onnx/by/ssl_model.pt",map_location='cuda')
 
-    # gpt_sovits = GPT_SoVITS(t2s,vits)
-    gpt_sovits = torch.jit.load("onnx/by/gpt_sovits_model.pt",map_location='cuda')
+    # OG_AI_LAB = OG_AI_LAB(t2s,vits)
+    OG_AI_LAB = torch.jit.load("onnx/by/OG_AI_LAB_model.pt",map_location='cuda')
 
     ref_seq_id,ref_bert_T,ref_norm_text = get_phones_and_bert(ref_text,"all_zh",'v2')
     ref_seq = torch.LongTensor([ref_seq_id])
@@ -772,7 +772,7 @@ def test():
     print('start ssl')
     ssl_content = ssl(ref_audio)
 
-    print('start gpt_sovits:')
+    print('start OG_AI_LAB:')
     print('ssl_content:',ssl_content.shape)
     print('ref_audio_sr:',ref_audio_sr.shape)
     print('ref_seq:',ref_seq.shape)
@@ -785,7 +785,7 @@ def test():
     text_bert=text_bert.to('cuda')
 
     with torch.no_grad():
-        audio = gpt_sovits(ssl_content, ref_audio_sr, ref_seq, text_seq, ref_bert, test_bert)
+        audio = OG_AI_LAB(ssl_content, ref_audio_sr, ref_seq, text_seq, ref_bert, test_bert)
     print('start write wav')
     soundfile.write("out.wav", audio.detach().cpu().numpy(), 32000)
 

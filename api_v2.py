@@ -1,12 +1,12 @@
 """
 # WebAPI文档
 
-` python api_v2.py -a 127.0.0.1 -p 9880 -c GPT_SoVITS/configs/tts_infer.yaml `
+` python api_v2.py -a 127.0.0.1 -p 9880 -c Alpha_Beta/configs/tts_infer.yaml `
 
 ## 执行参数:
     `-a` - `绑定地址, 默认"127.0.0.1"`
     `-p` - `绑定端口, 默认9880`
-    `-c` - `TTS配置文件路径, 默认"GPT_SoVITS/configs/tts_infer.yaml"`
+    `-c` - `TTS配置文件路径, 默认"Alpha_Beta/configs/tts_infer.yaml"`
 
 ## 调用:
 
@@ -74,7 +74,7 @@ endpoint: `/set_gpt_weights`
 
 GET:
 ```
-http://127.0.0.1:9880/set_gpt_weights?weights_path=GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt
+http://127.0.0.1:9880/set_gpt_weights?weights_path=OG_AI_LAB/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt
 ```
 RESP: 
 成功: 返回"success", http code 200
@@ -87,7 +87,7 @@ endpoint: `/set_sovits_weights`
 
 GET:
 ```
-http://127.0.0.1:9880/set_sovits_weights?weights_path=GPT_SoVITS/pretrained_models/s2G488k.pth
+http://127.0.0.1:9880/set_sovits_weights?weights_path=OG_AI_LAB/pretrained_models/s2G488k.pth
 ```
 
 RESP: 
@@ -102,7 +102,7 @@ from typing import Generator
 
 now_dir = os.getcwd()
 sys.path.append(now_dir)
-sys.path.append("%s/GPT_SoVITS" % (now_dir))
+sys.path.append("%s/OG_AI_LAB" % (now_dir))
 
 import argparse
 import subprocess
@@ -116,8 +116,8 @@ from fastapi import FastAPI, UploadFile, File
 import uvicorn
 from io import BytesIO
 from tools.i18n.i18n import I18nAuto
-from GPT_SoVITS.TTS_infer_pack.TTS import TTS, TTS_Config
-from GPT_SoVITS.TTS_infer_pack.text_segmentation_method import get_method_names as get_cut_method_names
+from OG_AI_LAB.TTS_infer_pack.TTS import TTS, TTS_Config
+from OG_AI_LAB.TTS_infer_pack.text_segmentation_method import get_method_names as get_cut_method_names
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 # print(sys.path)
@@ -125,7 +125,7 @@ i18n = I18nAuto()
 cut_method_names = get_cut_method_names()
 
 parser = argparse.ArgumentParser(description="GPT-SoVITS api")
-parser.add_argument("-c", "--tts_config", type=str, default="GPT_SoVITS/configs/tts_infer.yaml", help="tts_infer路径")
+parser.add_argument("-c", "--tts_config", type=str, default="Alpha_Beta/configs/tts_infer.yaml", help="tts_infer路径")
 parser.add_argument("-a", "--bind_addr", type=str, default="127.0.0.1", help="default: 127.0.0.1")
 parser.add_argument("-p", "--port", type=int, default="9880", help="default: 9880")
 args = parser.parse_args()
@@ -136,7 +136,7 @@ host = args.bind_addr
 argv = sys.argv
 
 if config_path in [None, ""]:
-    config_path = "GPT-SoVITS/configs/tts_infer.yaml"
+    config_path = "Alpha_Beta/configs/tts_infer.yaml"
 
 tts_config = TTS_Config(config_path)
 print(tts_config)

@@ -5,7 +5,7 @@ import torchaudio
 from torch import nn
 from feature_extractor import cnhubert
 
-cnhubert_base_path = "GPT_SoVITS/pretrained_models/chinese-hubert-base"
+cnhubert_base_path = "OG_AI_LAB/pretrained_models/chinese-hubert-base"
 cnhubert.cnhubert_base_path = cnhubert_base_path
 ssl_model = cnhubert.get_model()
 from text import cleaned_text_to_sequence
@@ -276,7 +276,7 @@ class SSLModel(nn.Module):
 def export(vits_path, gpt_path, project_name, vits_model="v2"):
     vits = VitsModel(vits_path)
     gpt = T2SModel(gpt_path, vits)
-    gpt_sovits = GptSoVits(vits, gpt)
+    OG_AI_LAB = GptSoVits(vits, gpt)
     ssl = SSLModel()
     ref_seq = torch.LongTensor([cleaned_text_to_sequence(["n", "i2", "h", "ao3", ",", "w", "o3", "sh", "i4", "b", "ai2", "y", "e4"],version=vits_model)])
     text_seq = torch.LongTensor([cleaned_text_to_sequence(["w", "o3", "sh", "i4", "b", "ai2", "y", "e4", "w", "o3", "sh", "i4", "b", "ai2", "y", "e4", "w", "o3", "sh", "i4", "b", "ai2", "y", "e4"],version=vits_model)])
@@ -297,14 +297,14 @@ def export(vits_path, gpt_path, project_name, vits_model="v2"):
     # debug = False
     debug = True
 
-    # gpt_sovits.export(ref_seq, text_seq, ref_bert, text_bert, ref_audio_sr, ssl_content, project_name)
+    # OG_AI_LAB.export(ref_seq, text_seq, ref_bert, text_bert, ref_audio_sr, ssl_content, project_name)
 
     if debug:
-        a, b = gpt_sovits(ref_seq, text_seq, ref_bert, text_bert, ref_audio_sr, ssl_content, debug=debug)
+        a, b = OG_AI_LAB(ref_seq, text_seq, ref_bert, text_bert, ref_audio_sr, ssl_content, debug=debug)
         soundfile.write("out1.wav", a.cpu().detach().numpy(), vits.hps.data.sampling_rate)
         soundfile.write("out2.wav", b[0], vits.hps.data.sampling_rate)
     else:
-        a = gpt_sovits(ref_seq, text_seq, ref_bert, text_bert, ref_audio_sr, ssl_content).detach().cpu().numpy()
+        a = OG_AI_LAB(ref_seq, text_seq, ref_bert, text_bert, ref_audio_sr, ssl_content).detach().cpu().numpy()
         soundfile.write("out.wav", a, vits.hps.data.sampling_rate)
 
     if vits_model == "v1":

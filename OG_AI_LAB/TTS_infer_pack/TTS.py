@@ -33,28 +33,28 @@ i18n = I18nAuto(language=language)
 # configs/tts_infer.yaml
 """
 custom:
-  bert_base_path: GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large
-  cnhuhbert_base_path: GPT_SoVITS/pretrained_models/chinese-hubert-base
+  bert_base_path: OG_AI_LAB/pretrained_models/chinese-roberta-wwm-ext-large
+  cnhuhbert_base_path: OG_AI_LAB/pretrained_models/chinese-hubert-base
   device: cpu
   is_half: false
-  t2s_weights_path: GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt
-  vits_weights_path: GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth
+  t2s_weights_path: OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt
+  vits_weights_path: OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth
   version: v2
 default:
-  bert_base_path: GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large
-  cnhuhbert_base_path: GPT_SoVITS/pretrained_models/chinese-hubert-base
+  bert_base_path: OG_AI_LAB/pretrained_models/chinese-roberta-wwm-ext-large
+  cnhuhbert_base_path: OG_AI_LAB/pretrained_models/chinese-hubert-base
   device: cpu
   is_half: false
-  t2s_weights_path: GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt
-  vits_weights_path: GPT_SoVITS/pretrained_models/s2G488k.pth
+  t2s_weights_path: OG_AI_LAB/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt
+  vits_weights_path: OG_AI_LAB/pretrained_models/s2G488k.pth
   version: v1
 default_v2:
-  bert_base_path: GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large
-  cnhuhbert_base_path: GPT_SoVITS/pretrained_models/chinese-hubert-base
+  bert_base_path: OG_AI_LAB/pretrained_models/chinese-roberta-wwm-ext-large
+  cnhuhbert_base_path: OG_AI_LAB/pretrained_models/chinese-hubert-base
   device: cpu
   is_half: false
-  t2s_weights_path: GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt
-  vits_weights_path: GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth
+  t2s_weights_path: OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt
+  vits_weights_path: OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth
   version: v2
 """
 
@@ -86,19 +86,19 @@ class TTS_Config:
                 "device": "cpu",
                 "is_half": False,
                 "version": "v1",
-                "t2s_weights_path": "GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt",
-                "vits_weights_path": "GPT_SoVITS/pretrained_models/s2G488k.pth",
-                "cnhuhbert_base_path": "GPT_SoVITS/pretrained_models/chinese-hubert-base",
-                "bert_base_path": "GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large",
+                "t2s_weights_path": "OG_AI_LAB/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt",
+                "vits_weights_path": "OG_AI_LAB/pretrained_models/s2G488k.pth",
+                "cnhuhbert_base_path": "OG_AI_LAB/pretrained_models/chinese-hubert-base",
+                "bert_base_path": "OG_AI_LAB/pretrained_models/chinese-roberta-wwm-ext-large",
             },
         "default_v2":{
                 "device": "cpu",
                 "is_half": False,
                 "version": "v2",
-                "t2s_weights_path": "GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt",
-                "vits_weights_path": "GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth",
-                "cnhuhbert_base_path": "GPT_SoVITS/pretrained_models/chinese-hubert-base",
-                "bert_base_path": "GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large",
+                "t2s_weights_path": "OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt",
+                "vits_weights_path": "OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth",
+                "cnhuhbert_base_path": "OG_AI_LAB/pretrained_models/chinese-hubert-base",
+                "bert_base_path": "OG_AI_LAB/pretrained_models/chinese-roberta-wwm-ext-large",
             },
     }
     configs:dict = None
@@ -120,7 +120,7 @@ class TTS_Config:
     def __init__(self, configs: Union[dict, str]=None):
         
         # 设置默认配置文件路径
-        configs_base_path:str = "GPT_SoVITS/configs/"
+        configs_base_path:str = "Alpha_Beta/configs/"
         os.makedirs(configs_base_path, exist_ok=True)
         self.configs_path:str = os.path.join(configs_base_path, "tts_infer.yaml")
         

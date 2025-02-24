@@ -11,7 +11,7 @@ import os, re, logging
 import sys
 now_dir = os.getcwd()
 sys.path.append(now_dir)
-sys.path.append("%s/GPT_SoVITS" % (now_dir))
+sys.path.append("%s/OG_AI_LAB" % (now_dir))
 
 logging.getLogger("markdown_it").setLevel(logging.ERROR)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
@@ -94,7 +94,7 @@ cut_method = {
     i18n("按标点符号切"): "cut5",
 }
 
-tts_config = TTS_Config("GPT_SoVITS/configs/tts_infer.yaml")
+tts_config = TTS_Config("Alpha_Beta/configs/tts_infer.yaml")
 tts_config.device = device
 tts_config.is_half = is_half
 tts_config.version = version
@@ -164,8 +164,8 @@ def change_choices():
     return {"choices": sorted(SoVITS_names, key=custom_sort_key), "__type__": "update"}, {"choices": sorted(GPT_names, key=custom_sort_key), "__type__": "update"}
 
 
-pretrained_sovits_name=["GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth", "GPT_SoVITS/pretrained_models/s2G488k.pth"]
-pretrained_gpt_name=["GPT_SoVITS/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt", "GPT_SoVITS/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt"]
+pretrained_sovits_name=["OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s2G2333k.pth", "OG_AI_LAB/pretrained_models/s2G488k.pth"]
+pretrained_gpt_name=["OG_AI_LAB/pretrained_models/gsv-v2final-pretrained/s1bert25hz-5kh-longer-epoch=12-step=369668.ckpt", "OG_AI_LAB/pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt"]
 _ =[[],[]]
 for i in range(2):
     if os.path.exists(pretrained_gpt_name[i]):
@@ -174,8 +174,8 @@ for i in range(2):
         _[-1].append(pretrained_sovits_name[i])
 pretrained_gpt_name,pretrained_sovits_name = _
 
-SoVITS_weight_root=["SoVITS_weights_v2","SoVITS_weights"]
-GPT_weight_root=["GPT_weights_v2","GPT_weights"]
+SoVITS_weight_root=["OG_AI_Lab_Beta_weights_v2","OG_AI_Lab_Beta_weights"]
+GPT_weight_root=["OG_AI_Lab_Alpha_weights_v2","OG_AI_Lab_Alpha_weights"]
 for path in SoVITS_weight_root+GPT_weight_root:
     os.makedirs(path,exist_ok=True)
 
@@ -571,8 +571,8 @@ with gr.Blocks(
         # with gr.Group():
         gr.Markdown(value=i18n("模型切换"))
         with gr.Row():
-            GPT_dropdown = gr.Dropdown(label=i18n("GPT模型列表"), choices=sorted(GPT_names, key=custom_sort_key), value=gpt_path, interactive=True)
-            SoVITS_dropdown = gr.Dropdown(label=i18n("SoVITS模型列表"), choices=sorted(SoVITS_names, key=custom_sort_key), value=sovits_path, interactive=True)
+            GPT_dropdown = gr.Dropdown(label=i18n("Alpha 模型列表"), choices=sorted(GPT_names, key=custom_sort_key), value=gpt_path, interactive=True)
+            SoVITS_dropdown = gr.Dropdown(label=i18n("Beta 模型列表"), choices=sorted(SoVITS_names, key=custom_sort_key), value=sovits_path, interactive=True)
             refresh_button = gr.Button(i18n("刷新模型路径"), variant="primary")
             refresh_button.click(fn=change_choices, inputs=[], outputs=[SoVITS_dropdown, GPT_dropdown])
 
@@ -590,7 +590,7 @@ with gr.Blocks(
                 )
                 with gr.Column():
                     ref_text_free = gr.Checkbox(label=i18n("开启无参考文本模式。不填参考文本亦相当于开启。"), value=False, interactive=True, show_label=True)
-                    gr.Markdown(i18n("使用无参考文本模式时建议使用微调的GPT，听不清参考音频说的啥(不晓得写啥)可以开，开启后无视填写的参考文本。"))
+                    gr.Markdown(i18n("使用无参考文本模式时建议使用微调的Alpha，听不清参考音频说的啥(不晓得写啥)可以开，开启后无视填写的参考文本。"))
     
         with gr.Column():
             gr.Markdown(value=i18n("*请填写需要合成的目标文本和语种模式"))
